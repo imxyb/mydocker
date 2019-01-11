@@ -16,6 +16,9 @@ func InitContainerProcess() (err error) {
 	readPipe := os.NewFile(uintptr(3), "pipe")
 	// 读取管道的数据
 	b, err := ioutil.ReadAll(readPipe)
+	if err != nil {
+		return
+	}
 	msgStr := string(b)
 	commandArr := strings.Split(msgStr, " ")
 	if len(commandArr) == 0 || commandArr[0] == "" {
@@ -77,7 +80,7 @@ func setUpMount() error {
 	defaultMountFlags := syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
 	// 挂载proc
 	if err := syscall.Mount("proc", "/proc", "proc", uintptr(defaultMountFlags), ""); err != nil {
-        return err
+		return err
 	}
 	if err := syscall.Mount("tmpfs", "/dev", "tmpfs", syscall.MS_NOSUID|syscall.MS_STRICTATIME, "mode=755"); err != nil {
 		return err
